@@ -46,7 +46,6 @@ public class HomePage extends BasePage {
         act.sendKeys(Keys.TAB).build().perform();
         act.sendKeys(Keys.TAB).build().perform();
         act.sendKeys(Keys.TAB).build().perform();
-        act.sendKeys(Keys.TAB).build().perform();
         act.sendKeys(Keys.ENTER).build().perform();
     }
 
@@ -79,11 +78,18 @@ public class HomePage extends BasePage {
         searchIcon.click();
         this.searchInput.sendKeys(searchValue);
         this.searchInput.sendKeys(Keys.ENTER);
+        wait.forLoading(5);
     }
 
     void checkSearchResult(String searchValue) {
-        String searchResultValue = driver.findElement(By.xpath("//div[@class='searchresults__itemWrapper']")).getText();
-        Assert.assertTrue("Displayed Search Result is " + searchResultValue + " instead of " + searchValue,
-                searchValue.equals(searchResultValue)); }
+        WebElement searchResult = driver.findElement(By.xpath("//*[@id='searchresults']/ol/li[1]/div/h3/a[1]"));
+        String text = (String) ((JavascriptExecutor) driver).executeScript(
+                "return arguments[0].nextSibling.textContent.trim()", searchResult);
+        if (text == searchValue) {
+            Assert.assertTrue("Displayed title is " + text + " instead of " + searchValue,
+                    searchValue.equals(text));
+        }
+    }
 }
+
 
