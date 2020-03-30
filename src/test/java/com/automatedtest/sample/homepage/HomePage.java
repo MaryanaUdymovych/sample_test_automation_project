@@ -3,18 +3,18 @@ package com.automatedtest.sample.homepage;
 import com.automatedtest.sample.basepage.BasePage;
 import org.junit.Assert;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.sql.Driver;
 
-public class HomePage extends BasePage{
+public class HomePage extends BasePage {
 
-    private static final String HOME_PAGE_URL = "https://www.ubs.com";
+    private static final String HOME_PAGE_URL = "https://www.ubs.com/global/en.html";
 
-    @FindBy(xpath = "//img[@class='logo__img']")
+    @FindBy(xpath = "//div[@class='header__logoTitle']")
     private WebElement logo;
 
     @FindBy(xpath = "//button[@aria-label='Search']")
@@ -31,30 +31,31 @@ public class HomePage extends BasePage{
         PageFactory.initElements(driver, this);
     }
 
-    void goToHomePage(){
+    void goToHomePage() {
         driver.get(HOME_PAGE_URL);
         wait.forLoading(5);
     }
 
 
-    public void acceptPolicy(){
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        jse.executeScript("document.getElementById('doc').focus();");
+    public void acceptPolicy() {
+        Actions act = new Actions(driver);
 
-        System.out.println(driver.switchTo().activeElement().getTagName());
-        driver.switchTo().activeElement().click();
-        //driver.switchTo().defaultContent();
-         //driver.findElement(By.xpath("//*[text()='Agree to all']");
-        //WebDriverWait wait = new WebDriverWait(driver, 5);
-        //wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[text()='Agree to all (optimized browsing experience)']")));
+        act.sendKeys(Keys.TAB).build().perform();
+
+        act.sendKeys(Keys.TAB).build().perform();
+        act.sendKeys(Keys.TAB).build().perform();
+        act.sendKeys(Keys.TAB).build().perform();
+        act.sendKeys(Keys.TAB).build().perform();
+        act.sendKeys(Keys.TAB).build().perform();
+        act.sendKeys(Keys.ENTER).build().perform();
     }
 
-    private WebElement getAcceptButton(){
-        return   findElementWithWait(PRIVACY_MODAL_WINDOW_WRAPPER)
+    private WebElement getAcceptButton() {
+        return findElementWithWait(PRIVACY_MODAL_WINDOW_WRAPPER)
                 .findElement(PRIVACY_ACCEPT_BUTTON);
     }
 
-    private WebElement findElementWithWait (By locator) {
+    private WebElement findElementWithWait(By locator) {
         return new WebDriverWait(driver, SEARCH_WAIT_TIME).
                 until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
@@ -75,7 +76,14 @@ public class HomePage extends BasePage{
     }
 
     void searchFor(String searchValue) {
+        searchIcon.click();
         this.searchInput.sendKeys(searchValue);
         this.searchInput.sendKeys(Keys.ENTER);
     }
+
+    void checkSearchResult(String searchValue) {
+        String searchResultValue = driver.findElement(By.xpath("//div[@class='searchresults__itemWrapper']")).getText();
+        Assert.assertTrue("Displayed Search Result is " + searchResultValue + " instead of " + searchValue,
+                searchValue.equals(searchResultValue)); }
 }
+

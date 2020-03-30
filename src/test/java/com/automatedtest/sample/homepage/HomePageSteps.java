@@ -43,4 +43,7 @@ public class HomePageSteps {
     public void aUserSearchesFor(String searchValue) {
         this.homePage.searchFor(searchValue);
     }
+
+    @Then ("^\"([^\"]*)\" is displayed in the result$")
+    public void verifySearchResult(String searchValue) { this.homePage.checkSearchResult(ç);}
 }
